@@ -43,7 +43,32 @@ public class G08HM2 {
     start = System.currentTimeMillis();
 
     //Word Count 1
+    JavaPairRDD<String, Long> wordcounts = docs.flatMapToPair((document) -> {
+              String[] tokens = document.split(" ");
+              ArrayList<Tuple2<String, Long>> pairs = new ArrayList<>();
+              for (String token : tokens) {
+                int i = pairs.indexOf(token);
+                if (i != -1){
+                  Tuple2<String, Long> x = pairs.remove(i);
+                  pairs.add(new Tuple2<>(token, x._2 + 1));
+                }
+                else
+                  pairs.add(new Tuple2<>(token, 1L));
+              }
+              return pairs.iterator();
+            }).groupByKey().mapValues((it) -> {
+              long sum = 0;
+              for (long c : it) {
+                sum += c;
+              }
+              return sum;
+            });
 
+    /* For visualizing the results
+    wordcounts.foreach(data -> {
+      System.out.println(data._1 + " - " + data._2);
+    });
+    */
 
     //End time
     end = System.currentTimeMillis();
