@@ -11,18 +11,38 @@ import java.util.Scanner;
 
 public class G08HM2 {
 
-  public static void main(String[] args) throws FileNotFoundException {
-    if (args.length == 0){
+  /*
+   * HOMEWORK 2
+   * Fate sempre prima l'update del progetto e poi iniziate a scrivere
+   * Ho scritto un po' di codice iniziale per ora nulla di strano 
+   * */
+
+  public static void main(String[] args) throws IllegalArgumentException {
+    if (args.length == 0)
       throw new IllegalArgumentException("Expecting the file name on the command line");
-    }
 
-    /*
-    * HOMEWORK 2
-    * Raga non c'è scritto ancora niente,
-    * Mi raccomando quando fate gli update scrivete cosa fate e commentate anche il codice
-    * Fate sempre prima l'update del progetto e poi iniziate a scrivere
-    * */
+    //Creation of the Spark Configuration
+    SparkConf configuration = new SparkConf(true );
+    configuration.setAppName("Homework 2");
+    configuration.setMaster("<master>");
 
-    //prova commit
+    //Now we can create the Spark Context
+    JavaSparkContext sc = new JavaSparkContext(configuration);
+
+    //Creation of the JavaRDD from the text file passed from the command line
+    JavaRDD<String> docs = sc.textFile(args[0]).cache();
+
+    //We do the count of the docs for forcing to load in memory
+    docs.count();
+
+    //Start time
+    long start = System.currentTimeMillis();
+
+    //Code to write
+
+    //End time
+    long end = System.currentTimeMillis();
+    System.out.println("Elapsed time " + (end - start) + " ms");
+
   }
 }
