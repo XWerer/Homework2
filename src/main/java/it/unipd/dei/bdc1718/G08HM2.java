@@ -5,6 +5,7 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import scala.Tuple2;
+import scala.Tuple3;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,6 +13,9 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class G08HM2 {
+
+  //the number of words in text-sample.txt
+  private static final long N = 3503570L;
 
   /*
    * HOMEWORK 2
@@ -42,15 +46,41 @@ public class G08HM2 {
     //Start time
     start = System.currentTimeMillis();
 
+    // Word count
+    JavaPairRDD<String, Long> wordcounts = docs
+            .flatMapToPair((document) -> {             // <-- Map phase
+              String[] tokens = document.split(" ");
+              ArrayList<Tuple2<String, Long>> pairs = new ArrayList<>();
+              for (String token : tokens) {
+                pairs.add(new Tuple2<>(token, 1L));
+              }
+              return pairs.iterator();
+            })
+            .groupByKey()                       // <-- Reduce phase
+            .mapValues((it) -> {
+              long sum = 0;
+              for (long c : it) {
+                sum += c;
+              }
+              return sum;
+            });
+
+    //End time
+    end = System.currentTimeMillis();
+    System.out.println("Elapsed time of word count 0: " + (end - start) + " ms");
+
+    //Start time
+    start = System.currentTimeMillis();
+
     //Word Count 1
-    JavaPairRDD<String, Long> wordcounts = docs.flatMapToPair((document) -> {
+    JavaPairRDD<String, Long> wordcount1 = docs.flatMapToPair((document) -> {
               String[] tokens = document.split(" ");
               ArrayList<Tuple2<String, Long>> pairs = new ArrayList<>();
               for (String token : tokens) {
                 int i = pairs.indexOf(token);
                 if (i != -1){
                   Tuple2<String, Long> x = pairs.remove(i);
-                  pairs.add(new Tuple2<>(token, x._2 + 1));
+                  pairs.add(new Tuple2<>(token, x._2() + 1));
                 }
                 else
                   pairs.add(new Tuple2<>(token, 1L));
@@ -65,23 +95,39 @@ public class G08HM2 {
             });
 
     /* For visualizing the results
-    wordcounts.foreach(data -> {
+    wordcount1.foreach(data -> {
       System.out.println(data._1 + " - " + data._2);
     });
     */
 
     //End time
     end = System.currentTimeMillis();
-    System.out.println("Elapsed time of word count 1 " + (end - start) + " ms");
+    System.out.println("Elapsed time of word count 1: " + (end - start) + " ms");
 
     //Start time
     start = System.currentTimeMillis();
 
     //Word Count 2
+    /* prova da finire
+    JavaPairRDD<String, Long> wordcount2 = docs.flatMapToPair((document) -> {
+              String[] tokens = document.split(" ");
+              ArrayList<Tuple3<Long, String, Long>> pairs = new ArrayList<>();
+              for (int i = 0; i < tokens.length; i++){
+                int j = pairs.indexOf(tokens[i]);
+                if (j != -1){
+                  Tuple3<Long, String, Long> x = pairs.remove(j);
+                  pairs.add(new Tuple3<>(x._1(), tokens[i], x._3() + 1));
+                }
+                else
+                  pairs.add(new Tuple3<>(i % (long) Math.sqrt(N), tokens[i], 1L));
+              }
+              return pairs.iterator();
+            });
+     */
 
     //End time
     end = System.currentTimeMillis();
-    System.out.println("Elapsed time of word count 2 " + (end - start) + " ms");
+    System.out.println("Elapsed time of word count 2: " + (end - start) + " ms");
 
     //Start time
     start = System.currentTimeMillis();
@@ -90,7 +136,7 @@ public class G08HM2 {
 
     //End time
     end = System.currentTimeMillis();
-    System.out.println("Elapsed time of word count 3 " + (end - start) + " ms");
+    System.out.println("Elapsed time of word count 3: " + (end - start) + " ms");
 
     //Stop the end of the program for seeing the web interface
     System.out.println("Press enter to finish");
