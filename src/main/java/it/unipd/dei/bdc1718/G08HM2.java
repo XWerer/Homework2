@@ -113,18 +113,24 @@ public class G08HM2 {
                     int j = pairs.indexOf(tokens[i]);
                     if (j != -1){
                       Tuple2<Long, Tuple2<String, Long>> x = pairs.remove(j);
-                      pairs.add(new Tuple2<>(x._1(), new Tuple2<>(tokens[i], x._2()._2())));
+                      pairs.add(new Tuple2<>(x._1(), new Tuple2<>(tokens[i], x._2()._2() + 1L)));
                     }
                     else
                       pairs.add(new Tuple2<>( (long) (i%Math.sqrt(N)), new Tuple2<>(tokens[i], 1L)));
                 }
                 return pairs.iterator();
-            }).groupByKey().mapValues((it) -> {
-
-
-
-
-
+            }).groupByKey().flatMapToPair((pair) -> {
+                ArrayList<Tuple2<String, Long>> pairs = new ArrayList<>();
+                for (Tuple2<String, Long> x : pair._2()) {
+                    int j = pairs.indexOf(x._1());
+                    if(j != -1){
+                        Tuple2<String, Long> y = pairs.remove(j);
+                        pairs.add(new Tuple2<>(x._1(), x._2() + y._2()));
+                    }
+                    else
+                        pairs.add(new Tuple2<>(x._1(), x._2()));
+                }
+                return pairs.iterator();
             });
 
     //End time
