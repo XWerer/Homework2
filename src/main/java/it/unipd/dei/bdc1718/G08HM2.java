@@ -131,7 +131,7 @@ public class G08HM2 {
                         pairs.add(new Tuple2<>(x._1(), x._2()));
                 }
                 return pairs.iterator();
-            });
+            }).reduceByKey((x,y) -> x+y);
 
     //End time
     end = System.currentTimeMillis();
