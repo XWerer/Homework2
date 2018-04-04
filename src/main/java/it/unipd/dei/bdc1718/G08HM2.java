@@ -38,7 +38,7 @@ public class G08HM2 {
     JavaSparkContext sc = new JavaSparkContext(configuration);
 
     //Creation of the JavaRDD from the text file passed from the command line
-    JavaRDD<String> docs = sc.textFile(args[0]).cache();
+    JavaRDD<String> docs = sc.textFile(args[0]).cache().repartition(8);
 
     //We do the count of the docs for forcing the load in memory
     System.out.println("The number of documents is " + docs.count());
@@ -148,7 +148,7 @@ public class G08HM2 {
 
     System.out.println("0. The number of distinct words is " + wordcounts.count());
     System.out.println("1. The number of distinct words is " + wordcounts1.count());
-    //System.out.println("2. The number of distinct words is " + wordcounts2.count());
+    System.out.println("2. The number of distinct words is " + wordcounts2.count());
     //System.out.println("3. The number of distinct words is " + wordcounts.count());
 
     //Stop the end of the program for seeing the web interface
