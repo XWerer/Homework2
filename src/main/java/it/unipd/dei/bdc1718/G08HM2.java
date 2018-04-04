@@ -41,23 +41,20 @@ public class G08HM2 {
     JavaRDD<String> docs = sc.textFile(args[0]).cache();
 
     //We do the count of the docs for forcing the load in memory
-    docs.count();
+    System.out.println("The number of documents is " + docs.count());
 
     //Start time
     start = System.currentTimeMillis();
 
     // Word count
-    JavaPairRDD<String, Long> wordcounts = docs
-            .flatMapToPair((document) -> {             // <-- Map phase
+    JavaPairRDD<String, Long> wordcounts = docs.flatMapToPair((document) -> {
               String[] tokens = document.split(" ");
               ArrayList<Tuple2<String, Long>> pairs = new ArrayList<>();
               for (String token : tokens) {
                 pairs.add(new Tuple2<>(token, 1L));
               }
               return pairs.iterator();
-            })
-            .groupByKey()                       // <-- Reduce phase
-            .mapValues((it) -> {
+            }).groupByKey().mapValues((it) -> {
               long sum = 0;
               for (long c : it) {
                 sum += c;
@@ -73,7 +70,7 @@ public class G08HM2 {
     start = System.currentTimeMillis();
 
     //Word Count 1
-    JavaPairRDD<String, Long> wordcount1 = docs.flatMapToPair((document) -> {
+    JavaPairRDD<String, Long> wordcounts1 = docs.flatMapToPair((document) -> {
               String[] tokens = document.split(" ");
               ArrayList<Tuple2<String, Long>> pairs = new ArrayList<>();
               for (String token : tokens) {
@@ -108,22 +105,27 @@ public class G08HM2 {
     start = System.currentTimeMillis();
 
     //Word Count 2
-    /* prova da finire
-    JavaPairRDD<String, Long> wordcount2 = docs.flatMapToPair((document) -> {
-              String[] tokens = document.split(" ");
-              ArrayList<Tuple3<Long, String, Long>> pairs = new ArrayList<>();
-              for (int i = 0; i < tokens.length; i++){
-                int j = pairs.indexOf(tokens[i]);
-                if (j != -1){
-                  Tuple3<Long, String, Long> x = pairs.remove(j);
-                  pairs.add(new Tuple3<>(x._1(), tokens[i], x._3() + 1));
+    // prova da finire
+    JavaPairRDD<String, Long> wordcounts2 = docs.flatMapToPair((document) -> {
+                String[] tokens = document.split(" ");
+                ArrayList<Tuple2<Long, Tuple2<String, Long>>> pairs = new ArrayList<>();
+                for (int i = 0; i < tokens.length; i++){
+                    int j = pairs.indexOf(tokens[i]);
+                    if (j != -1){
+                      Tuple2<Long, Tuple2<String, Long>> x = pairs.remove(j);
+                      pairs.add(new Tuple2<>(x._1(), new Tuple2<>(tokens[i], x._2()._2())));
+                    }
+                    else
+                      pairs.add(new Tuple2<>( (long) (i%Math.sqrt(N)), new Tuple2<>(tokens[i], 1L)));
                 }
-                else
-                  pairs.add(new Tuple3<>(i % (long) Math.sqrt(N), tokens[i], 1L));
-              }
-              return pairs.iterator();
+                return pairs.iterator();
+            }).groupByKey().mapValues((it) -> {
+
+
+
+
+
             });
-     */
 
     //End time
     end = System.currentTimeMillis();
@@ -137,6 +139,11 @@ public class G08HM2 {
     //End time
     end = System.currentTimeMillis();
     System.out.println("Elapsed time of word count 3: " + (end - start) + " ms");
+
+    System.out.println("0. The number of distinct words is " + wordcounts.count());
+    System.out.println("1. The number of distinct words is " + wordcounts1.count());
+    //System.out.println("2. The number of distinct words is " + wordcounts2.count());
+    //System.out.println("3. The number of distinct words is " + wordcounts.count());
 
     //Stop the end of the program for seeing the web interface
     System.out.println("Press enter to finish");
