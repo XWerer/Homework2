@@ -38,7 +38,7 @@ public class G08HM2 {
     JavaSparkContext sc = new JavaSparkContext(configuration);
 
     //Creation of the JavaRDD from the text file passed from the command line
-    JavaRDD<String> docs = sc.textFile(args[0]).cache().repartition(8);
+    JavaRDD<String> docs = sc.textFile(args[0]).cache().repartition(16);
 
     //We do the count of the docs for forcing the load in memory
     System.out.println("The number of documents is " + docs.count());
@@ -105,7 +105,6 @@ public class G08HM2 {
     start = System.currentTimeMillis();
 
     //Word Count 2
-    // prova da finire
     JavaPairRDD<String, Long> wordcounts2 = docs.flatMapToPair((document) -> {
                 String[] tokens = document.split(" ");
                 ArrayList<Tuple2<Long, Tuple2<String, Long>>> pairs = new ArrayList<>();
@@ -149,7 +148,12 @@ public class G08HM2 {
     System.out.println("0. The number of distinct words is " + wordcounts.count());
     System.out.println("1. The number of distinct words is " + wordcounts1.count());
     System.out.println("2. The number of distinct words is " + wordcounts2.count());
-    //System.out.println("3. The number of distinct words is " + wordcounts.count());
+    //System.out.println("3. The number of distinct words is " + wordcounts3.count());
+
+    //Da aggiungere la cosa delle k parole!
+    JavaRDD<Tuple2<Long, String>> x = wordcounts.map((pair) -> {
+        return new Tuple2(pair._2(), pair._1());
+    });
 
     //Stop the end of the program for seeing the web interface
     System.out.println("Press enter to finish");
