@@ -5,6 +5,7 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import scala.Tuple2;
+import java.util.*;
 import scala.Tuple3;
 
 import java.io.File;
@@ -105,7 +106,6 @@ public class G08HM2 {
     start = System.currentTimeMillis();
 
     //Word Count 2
-    // prova da finire
     JavaPairRDD<String, Long> wordcounts2 = docs.flatMapToPair((document) -> {
                 String[] tokens = document.split(" ");
                 ArrayList<Tuple2<Long, Tuple2<String, Long>>> pairs = new ArrayList<>();
@@ -141,7 +141,6 @@ public class G08HM2 {
     start = System.currentTimeMillis();
 
     //Word Count 3
-
     //End time
     end = System.currentTimeMillis();
     System.out.println("Elapsed time of word count 3: " + (end - start) + " ms");
@@ -150,8 +149,24 @@ public class G08HM2 {
     System.out.println("1. The number of distinct words is " + wordcounts1.count());
     System.out.println("2. The number of distinct words is " + wordcounts2.count());
     //System.out.println("3. The number of distinct words is " + wordcounts.count());
+    System.out.println("      Insert the number you want   ");
+    Scanner scanner = new Scanner(System.in);
+    int k = scanner.nextInt();
 
-    //Stop the end of the program for seeing the web interface
+      JavaPairRDD<String, Long> last = wordcounts2.mapToPair(x -> x.swap())
+            .sortByKey(false)
+            .mapToPair(x -> x.swap());
+
+        /*
+      last.foreach(data -> {
+          for(int i=0; i<k;i++)
+          System.out.println("word : "+data._1() + " number occurences=" + data._2());
+      });
+
+        */
+
+
+      //Stop the end of the program for seeing the web interface
     System.out.println("Press enter to finish");
     System.in.read();
   }
