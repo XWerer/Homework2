@@ -209,21 +209,22 @@ public class G08HM2 {
         System.out.println("How much words?");
         Scanner in  = new Scanner(System.in);
         int k = in.nextInt();
+        List<Tuple2<String, Long>> k_words;
 
-        List<Tuple2<String, Long>> k_words = wordcounts.top(k, new Tuple2Comparator());
+        k_words = wordcounts.top(k, new Tuple2Comparator());
         for (Tuple2<String, Long> word : k_words)
             System.out.println("Case 0: " + word._1() + " - " + word._2());
 
-        List<Tuple2<String, Long>> k_words1 = wordcounts1.top(k, new Tuple2Comparator());
-        for (Tuple2<String, Long> word : k_words1)
+        k_words = wordcounts1.top(k, new Tuple2Comparator());
+        for (Tuple2<String, Long> word : k_words)
             System.out.println("Case 1: " + word._1() + " - " + word._2());
 
-        List<Tuple2<String, Long>> k_words2 = wordcounts2.top(k, new Tuple2Comparator());
-        for (Tuple2<String, Long> word : k_words2)
+        k_words = wordcounts2.top(k, new Tuple2Comparator());
+        for (Tuple2<String, Long> word : k_words)
             System.out.println("Case 2: " + word._1() + " - " + word._2());
 
-        List<Tuple2<String, Long>> k_words3 = wordcounts3.top(k, new Tuple2Comparator());
-        for (Tuple2<String, Long> word : k_words3)
+        k_words = wordcounts3.top(k, new Tuple2Comparator());
+        for (Tuple2<String, Long> word : k_words)
             System.out.println("Case 3: " + word._1() + " - " + word._2());
 
         //Stop the end of the program for seeing the web interface
