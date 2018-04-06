@@ -16,7 +16,7 @@ import java.util.Scanner;
  * Group 08:
  *  Castelletto Riccardo
  *  Masiero Davide
- *  Spadotto Matteo
+ *  Spadotto Teo
  */
 
 public class G08HM2 {
