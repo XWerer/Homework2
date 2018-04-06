@@ -51,6 +51,17 @@ public class G08HM2 {
         }
     }
 
+    //Method for printing the most frequency k words
+    private static void print(JavaPairRDD<Long, Iterable<String>> swapped, int k){
+        List<Tuple2<Long, Iterable<String>>> k_words = swapped.top(k, new Tuple2Comparator());
+        for (Tuple2<Long, Iterable<String>> record: k_words){
+            System.out.print(record._1() + " ");
+            for (String word: record._2())
+                System.out.print(word + " ");
+            System.out.println();
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         if (args.length == 0)
             throw new IllegalArgumentException("Expecting the file name on the command line");
@@ -204,45 +215,20 @@ public class G08HM2 {
         System.out.println("How much words?");
         Scanner in  = new Scanner(System.in);
         int k = in.nextInt(); //Number of words
-        List<Tuple2<Long, Iterable<String>>> k_words; //For printing the k_words
         JavaPairRDD<Long, Iterable<String>> swapped; //For the swapped version of the wordcounts
 
         //For each wordcounts we are going to swap the key-value and group by key (group the word with the same count)
         swapped = wordcounts.mapToPair(Operation::swap).groupByKey();
-        k_words = swapped.top(k, new Tuple2Comparator());
-        for (Tuple2<Long, Iterable<String>> record: k_words){
-            System.out.print("Case Word Count 0: " + record._1() + " ");
-            for (String word: record._2())
-                System.out.print(word + " ");
-            System.out.println();
-        }
+        print(swapped, k);
 
         swapped = wordcounts1.mapToPair(Operation::swap).groupByKey();
-        k_words = swapped.top(k, new Tuple2Comparator());
-        for (Tuple2<Long, Iterable<String>> record: k_words){
-            System.out.print("Case Word Count 1: " + record._1() + " ");
-            for (String word: record._2())
-                System.out.print(word + " ");
-            System.out.println();
-        }
+        print(swapped, k);
 
         swapped = wordcounts2.mapToPair(Operation::swap).groupByKey();
-        k_words = swapped.top(k, new Tuple2Comparator());
-        for (Tuple2<Long, Iterable<String>> record: k_words){
-            System.out.print("Case Word Count 2: " + record._1() + " ");
-            for (String word: record._2())
-                System.out.print(word + " ");
-            System.out.println();
-        }
+        print(swapped, k);
 
         swapped = wordcounts3.mapToPair(Operation::swap).groupByKey();
-        k_words = swapped.top(k, new Tuple2Comparator());
-        for (Tuple2<Long, Iterable<String>> record: k_words){
-            System.out.print("Case Word Count 3: " + record._1() + " ");
-            for (String word: record._2())
-                System.out.print(word + " ");
-            System.out.println();
-        }
+        print(swapped, k);
 
         //Stop the end of the program for seeing the web interface
         System.out.println("Press enter to finish");
