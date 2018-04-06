@@ -25,13 +25,29 @@ public class G08HM2 {
     private static final long N = 3503570L;
 
     //class for implement the compare method
-    public static class Tuple2Comparator implements Serializable, Comparator<Tuple2<String, Long>> {
+    public static class Tuple2Comparator implements Serializable, Comparator<Tuple2<Long, Iterable<String>>> {
 
         //comparator for method top
-        public int compare(Tuple2<String, Long> a, Tuple2<String, Long> b) {
-            if (a._2() < b._2()) return -1;
-            else if (a._2() > b._2()) return 1;
+        public int compare(Tuple2<Long, Iterable<String>> a, Tuple2<Long, Iterable<String>> b) {
+            if (a._1() < b._1()) return -1;
+            else if (a._1() > b._1()) return 1;
             return 0;
+        }
+    }
+
+    //Class for same operation done in the program
+    private static class Operation{
+
+        private static long sum(Iterable<Long> it){
+            //Reduce phase
+            long sum = 0;
+            for (long c : it)
+                sum += c;
+            return sum;
+        }
+
+        private static Tuple2<Long, String> swap(Tuple2<String, Long> x){
+            return x.swap();
         }
     }
 
@@ -50,7 +66,7 @@ public class G08HM2 {
         JavaSparkContext sc = new JavaSparkContext(configuration);
 
         //Creation of the JavaRDD from the text file passed from the command line
-        JavaRDD<String> docs = sc.textFile(args[0]).cache().repartition(4);
+        JavaRDD<String> docs = sc.textFile(args[0]).cache().repartition(16);
 
         //We do the count of the docs for forcing the load in memory
         System.out.println("The number of documents is " + docs.count());
@@ -67,14 +83,7 @@ public class G08HM2 {
                 pairs.add(new Tuple2<>(token, 1L));
             }
             return pairs.iterator();
-        }).groupByKey().mapValues((it) -> {
-            //Round 1: Reduce phase
-            long sum = 0;
-            for (long c : it) {
-                sum += c;
-            }
-            return sum;
-        });
+        }).groupByKey().mapValues(Operation::sum); //Round 1: Reduce Phase
 
         System.out.println("0. The number of distinct words is " + wordcounts.count());
 
@@ -101,14 +110,7 @@ public class G08HM2 {
                     pairs.add(x);
             }
             return pairs.iterator();
-        }).groupByKey().mapValues((it) -> {
-            //Round 1: Reduce phase
-            long sum = 0;
-            for (long c : it) {
-                sum += c;
-            }
-            return sum;
-        });
+        }).groupByKey().mapValues(Operation::sum); //Round 1: Reduce Phase
 
         System.out.println("1. The number of distinct words is " + wordcounts1.count());
 
@@ -163,14 +165,7 @@ public class G08HM2 {
                     pairs.add(new Tuple2<>(x._1(), x._2()));
             }
             return pairs.iterator();
-        }).groupByKey().mapValues((it) -> {
-            //Round 2: Reduce phase
-            long sum = 0;
-            for (long c : it) {
-                sum += c;
-            }
-            return sum;
-        });
+        }).groupByKey().mapValues(Operation::sum); //Round 2: Reduce Phase
 
         System.out.println("2. The number of distinct words is " + wordcounts2.count());
 
@@ -208,24 +203,46 @@ public class G08HM2 {
         //Part of the k most frequent words
         System.out.println("How much words?");
         Scanner in  = new Scanner(System.in);
-        int k = in.nextInt();
-        List<Tuple2<String, Long>> k_words;
+        int k = in.nextInt(); //Number of words
+        List<Tuple2<Long, Iterable<String>>> k_words; //For printing the k_words
+        JavaPairRDD<Long, Iterable<String>> swapped; //For the swapped version of the wordcounts
 
-        k_words = wordcounts.top(k, new Tuple2Comparator());
-        for (Tuple2<String, Long> word : k_words)
-            System.out.println("Case 0: " + word._1() + " - " + word._2());
+        //For each wordcounts we are going to swap the key-value and group by key (group the word with the same count)
+        swapped = wordcounts.mapToPair(Operation::swap).groupByKey();
+        k_words = swapped.top(k, new Tuple2Comparator());
+        for (Tuple2<Long, Iterable<String>> record: k_words){
+            System.out.print("Case Word Count 0: " + record._1() + " ");
+            for (String word: record._2())
+                System.out.print(word + " ");
+            System.out.println();
+        }
 
-        k_words = wordcounts1.top(k, new Tuple2Comparator());
-        for (Tuple2<String, Long> word : k_words)
-            System.out.println("Case 1: " + word._1() + " - " + word._2());
+        swapped = wordcounts1.mapToPair(Operation::swap).groupByKey();
+        k_words = swapped.top(k, new Tuple2Comparator());
+        for (Tuple2<Long, Iterable<String>> record: k_words){
+            System.out.print("Case Word Count 1: " + record._1() + " ");
+            for (String word: record._2())
+                System.out.print(word + " ");
+            System.out.println();
+        }
 
-        k_words = wordcounts2.top(k, new Tuple2Comparator());
-        for (Tuple2<String, Long> word : k_words)
-            System.out.println("Case 2: " + word._1() + " - " + word._2());
+        swapped = wordcounts2.mapToPair(Operation::swap).groupByKey();
+        k_words = swapped.top(k, new Tuple2Comparator());
+        for (Tuple2<Long, Iterable<String>> record: k_words){
+            System.out.print("Case Word Count 2: " + record._1() + " ");
+            for (String word: record._2())
+                System.out.print(word + " ");
+            System.out.println();
+        }
 
-        k_words = wordcounts3.top(k, new Tuple2Comparator());
-        for (Tuple2<String, Long> word : k_words)
-            System.out.println("Case 3: " + word._1() + " - " + word._2());
+        swapped = wordcounts3.mapToPair(Operation::swap).groupByKey();
+        k_words = swapped.top(k, new Tuple2Comparator());
+        for (Tuple2<Long, Iterable<String>> record: k_words){
+            System.out.print("Case Word Count 3: " + record._1() + " ");
+            for (String word: record._2())
+                System.out.print(word + " ");
+            System.out.println();
+        }
 
         //Stop the end of the program for seeing the web interface
         System.out.println("Press enter to finish");
