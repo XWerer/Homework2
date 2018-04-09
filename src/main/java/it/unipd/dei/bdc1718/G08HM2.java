@@ -145,7 +145,7 @@ public class G08HM2 {
                         k++;
                 }
                 boolean find = false; //flag
-                //We going to find if we have already insert the word token
+                //We search if we have already insert the word token
                 for (Tuple2<Long, Tuple2<String, Long>> pair: pairs){
                     if (token.equals(pair._2()._1())) {
                         find = true;
@@ -162,7 +162,7 @@ public class G08HM2 {
             for (Tuple2<String, Long> x : obj._2()){
                 boolean find = false; //flag
                 //We going to verify if we have already insert a key-value with the same key
-                //In case we have already insert it we update it
+                //In case we have already insert it, we update it
                 for (int i = 0; i < pairs.size(); i++){
                     if(pairs.get(i)._1().equals(x._1())){
                         pairs.set(i, new Tuple2<>(x._1(), x._2() + pairs.get(i)._2()));
@@ -217,7 +217,7 @@ public class G08HM2 {
         int k = in.nextInt(); //Number of words
         JavaPairRDD<Long, Iterable<String>> swapped; //For the swapped version of the wordcounts
 
-        //For each wordcounts we are going to swap the key-value and group by key (group the word with the same count)
+        //For each wordcounts we are going to swap the key-value and group by key (group the word with the same count), we use the method we have write before
         swapped = wordcounts.mapToPair(Operation::swap).groupByKey();
         print(swapped, k);
 
