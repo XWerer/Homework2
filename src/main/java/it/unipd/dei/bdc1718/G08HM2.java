@@ -117,7 +117,7 @@ public class G08HM2 {
                         k++;
                 }
                 Tuple2<String, Long> x = new Tuple2<>(token, (long) k);
-                if(pairs.indexOf(x) == -1)
+                if(pairs.indexOf(x) == -1)                                      //forse non serve questo if ...FORSE
                     pairs.add(x);
             }
             return pairs.iterator();
