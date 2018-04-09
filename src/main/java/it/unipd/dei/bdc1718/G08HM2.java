@@ -152,12 +152,11 @@ public class G08HM2 {
                         break;
                     }
                 }
-                if(!find)
+                if(!find)       //if we don't have yet inserted the world, we add it using for key a number between 0 and sqrt(N)
                     pairs.add(new Tuple2<>((long) (i++%Math.sqrt(N)), new Tuple2<>(token, (long) k)));
             }
             return pairs.iterator();
-        }).groupByKey().flatMapToPair((obj) -> {
-            //Round 1: Reduce phase
+        }).groupByKey().flatMapToPair((obj) -> {    //Round 1: Reduce phase
             ArrayList<Tuple2<String, Long>> pairs = new ArrayList<>();
             for (Tuple2<String, Long> x : obj._2()){
                 boolean find = false; //flag
