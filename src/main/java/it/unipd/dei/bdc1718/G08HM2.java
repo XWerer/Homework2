@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
+import java.io.*;
 
 /*
  * HOMEWORK 2:
@@ -78,6 +79,27 @@ public class G08HM2 {
 
         //Creation of the JavaRDD from the text file passed from the command line
         JavaRDD<String> docs = sc.textFile(args[0]).cache().repartition(16);
+
+
+        //***********************TROVA IL NUMERO N***************
+        BufferedReader filebuf = new BufferedReader(new FileReader(args[0]));
+        String nextStr;
+        int parole=0;
+        nextStr = filebuf.readLine();        //legge una intera riga del file
+        while (nextStr != null) {
+            String[] tokens = nextStr.split(" ");
+            parole+= tokens.length;
+            nextStr = filebuf.readLine();
+
+        }
+
+        if(parole == N) { System.out.print("PAROLE PAROLE PAROLE "+parole);}
+
+
+        //***********************TROVA IL NUMERO N***************
+
+
+
 
         //We do the count of the docs for forcing the load in memory
         System.out.println("The number of documents is " + docs.count());
