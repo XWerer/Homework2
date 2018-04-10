@@ -84,7 +84,7 @@ public class G08HM2 {
         //***********************TROVA IL NUMERO N***************
         BufferedReader filebuf = new BufferedReader(new FileReader(args[0]));
         String nextStr;
-        int parole=0;
+        long parole=0L;
         nextStr = filebuf.readLine();        //legge una intera riga del file
         while (nextStr != null) {
             String[] tokens = nextStr.split(" ");
