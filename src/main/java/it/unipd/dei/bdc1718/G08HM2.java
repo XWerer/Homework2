@@ -96,7 +96,7 @@ public class G08HM2 {
         if(parole == N) { System.out.print("PAROLE PAROLE PAROLE "+parole);}
 
 
-        //***********************TROVA IL NUMERO N***************
+        //***********************TROVA IL NUMERO N**************
 
 
 
