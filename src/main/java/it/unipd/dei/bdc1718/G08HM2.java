@@ -22,10 +22,10 @@ import java.io.*;
 
 public class G08HM2 {
 
-    //the number of words in text-sample.txt
+    //number of words in text-sample.txt
     private static final long N = 3503570L;
 
-    //class for implement the compare method
+    //class implementing the compare method
     public static class Tuple2Comparator implements Serializable, Comparator<Tuple2<Long, Iterable<String>>> {
 
         //comparator for method top
@@ -36,7 +36,7 @@ public class G08HM2 {
         }
     }
 
-    //Class for same operation done in the program
+    //Class for the same operation done in the program
     private static class Operation{
 
         private static long sum(Iterable<Long> it){
@@ -52,7 +52,7 @@ public class G08HM2 {
         }
     }
 
-    //Method for printing the most frequency k words
+    //Method for printing the most frequent k words
     private static void print(JavaPairRDD<Long, Iterable<String>> swapped, int k){
         List<Tuple2<Long, Iterable<String>>> k_words = swapped.top(k, new Tuple2Comparator());
         for (Tuple2<Long, Iterable<String>> record: k_words){
@@ -167,14 +167,14 @@ public class G08HM2 {
                         k++;
                 }
                 boolean find = false; //flag
-                //We search if we have already insert the word token
+                //We try to see if we have already inserted the word token
                 for (Tuple2<Long, Tuple2<String, Long>> pair: pairs){
                     if (token.equals(pair._2()._1())) {
                         find = true;
                         break;
                     }
                 }
-                if(!find)       //if we don't have yet inserted the world, we add it using for key a number between 0 and sqrt(N)
+                if(!find)       //if we don't have inserted the world yet, we add it using a number between 0 and sqrt(N) as key
                     pairs.add(new Tuple2<>((long) (i++%Math.sqrt(N)), new Tuple2<>(token, (long) k)));
             }
             return pairs.iterator();
@@ -182,13 +182,13 @@ public class G08HM2 {
             ArrayList<Tuple2<String, Long>> pairs = new ArrayList<>();
             for (Tuple2<String, Long> x : obj._2()){
                 boolean find = false; //flag
-                //We going to verify if we have already insert a key-value with the same key
-                //In case we have already insert it, we update it
+                //We are going to verify if we have already inserted a key-value with the same key
+                //In the case we have already inserted it, we update it
                 for (int i = 0; i < pairs.size(); i++){
                     if(pairs.get(i)._1().equals(x._1())){
                         pairs.set(i, new Tuple2<>(x._1(), x._2() + pairs.get(i)._2()));
                         find = true;
-                        //We can exit from the for because there is only one copy with the same key
+                        //We can exit from the for loop because there is only one copy with the same key
                         break;
                     }
                 }
@@ -238,7 +238,7 @@ public class G08HM2 {
         int k = in.nextInt(); //Number of words
         JavaPairRDD<Long, Iterable<String>> swapped; //For the swapped version of the wordcounts
 
-        //For each wordcounts we are going to swap the key-value and group by key (group the word with the same count), we use the method we have write before
+        //For each wordcounts we are going to swap the key-value and group by key (group the word with the same count), we use the method we have written before
         swapped = wordcounts.mapToPair(Operation::swap).groupByKey();
         print(swapped, k);
 
@@ -251,7 +251,7 @@ public class G08HM2 {
         swapped = wordcounts3.mapToPair(Operation::swap).groupByKey();
         print(swapped, k);
 
-        //Stop the end of the program for seeing the web interface
+        //Stop the end of the program to see the web interface
         System.out.println("Press enter to finish");
         System.in.read();
       }
