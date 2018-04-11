@@ -1,0 +1,16 @@
+Index: src/main/java/it/unipd/dei/bdc1718/G08HM2.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/it/unipd/dei/bdc1718/G08HM2.java	(revision 79fd9c9884ae410fea309c5528e0f180f020f7d4)
++++ src/main/java/it/unipd/dei/bdc1718/G08HM2.java	(revision 6c9bf49c389461ff899aefae88fa1c904d33851d)
+@@ -84,7 +84,7 @@
+         //***********************TROVA IL NUMERO N***************
+         BufferedReader filebuf = new BufferedReader(new FileReader(args[0]));
+         String nextStr;
+-        long parole=0L;
++        int parole=0;
+         nextStr = filebuf.readLine();        //legge una intera riga del file
+         while (nextStr != null) {
+             String[] tokens = nextStr.split(" ");
