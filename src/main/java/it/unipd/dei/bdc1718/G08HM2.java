@@ -20,6 +20,7 @@ import java.io.*;
  *  Spadotto Teo
  */
 
+//principal class
 public class G08HM2 {
 
     //number of words in text-sample.txt
